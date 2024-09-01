@@ -1,181 +1,249 @@
 #include <iostream>
 #include <fstream>
-#include<unistd.h>
+#include <windows.h>
 using namespace std;
 
-class University{
+class University
+{
 private:
-	string RollNo, Name, Subject, Address;
+    string RollNo, Name, Subject, Address;
+
 public:
-University():RollNo(""), Name(""), Subject(""), Address(""){}
+    University() : RollNo(""), Name(""), Subject(""), Address("") {}
 
-void setRollNo(string rollNo){
-RollNo = rollNo;
-}
+    void setRollNo(string rollNo)
+    {
+        RollNo = rollNo;
+    }
 
-void setName(string name){
- Name = name;
-}
+    void setName(string name)
+    {
+        Name = name;
+    }
 
-void setSubject(string subject){
- Subject = subject;
-}
+    void setSubject(string subject)
+    {
+        Subject = subject;
+    }
 
-void setAddress(string address){
- Address = address;
-}
+    void setAddress(string address)
+    {
+        Address = address;
+    }
 
-string getRollNo(){
-return RollNo;
-}
+    string getRollNo()
+    {
+        return RollNo;
+    }
 
-string getName(){
- return Name;
-}
+    string getName()
+    {
+        return Name;
+    }
 
-string getSubject(){
- return Subject;
-}
+    string getSubject()
+    {
+        return Subject;
+    }
 
-string getAddress(){
- return Address;
-}
+    string getAddress()
+    {
+        return Address;
+    }
 };
 
-void add(University student){
-string rollNo, name, subject, address;
+void add(University student)
+{
+    string rollNo, name, subject, address;
 
-cout<<"\tEnter RollNo Of Student: ";
-cin>>rollNo;
-student.setRollNo(rollNo);
+    cout << "\tEnter RollNo Of Student: ";
+    cin >> rollNo;
+    student.setRollNo(rollNo);
 
-cout<<"\tEnter Name Of Student: ";
-cin>>name;
-student.setName(name);
+    cout << "\tEnter Name Of Student: ";
+    cin >> name;
+    student.setName(name);
 
-cout<<"\tEnter Subject Of Student: ";
-cin>>subject;
-student.setSubject(subject);
+    cout << "\tEnter Subject Of Student: ";
+    cin >> subject;
+    student.setSubject(subject);
 
-cout<<"\tEnter Address Of Student: ";
-cin>>address;
-student.setAddress(address);
+    cout << "\tEnter Address Of Student: ";
+    cin >> address;
+    student.setAddress(address);
 
-ofstream out("/Users/aryannarang/Desktop/University Management System/university.txt", ios::app);
-if(!out){
-cout<<"\tError: File Can't Open!"<<endl;
+    ofstream out("C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university.txt", ios::app);
+    if (!out)
+    {
+        cout << "\tError: File Can't Open!" << endl;
+    }
+
+    else
+    {
+        out << "\t" << student.getRollNo() << " : " << student.getName() << " : " << student.getSubject()
+            << " : " << student.getAddress() << endl;
+    }
+    out.close();
+    cout << "\tStudent Added Successfuly!" << endl;
 }
 
-else{
-out<<"\t"<<student.getRollNo()<<" : "<<student.getName()<<" : "<<student.getSubject()
-<<" : "<<student.getAddress()<<endl<<endl;
-}
-out.close();
-cout<<"\tStudent Added Successfuly!"<<endl;
+void search()
+{
+    string rollNo;
+    cout << "\tEnter RollNo Of Student: ";
+    cin >> rollNo;
+
+    ifstream in("C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university.txt");
+    if (!in)
+    {
+        cout << "\tError: File Can't Open!" << endl;
+        return;
+    }
+
+    string line;
+    bool found = false;
+    while (getline(in, line))
+    {
+        int data = line.find(rollNo);
+        if (data != string::npos)
+        {
+            cout << "\t" << line << endl;
+            found = true;
+            break;  // Exit the loop once the student is found
+        }
+    }
+
+    if (!found)
+    {
+        cout << "\tStudent Not Found!" << endl;
+    }
+
+    in.close();
 }
 
-void search(){
-	string rollNo;
-cout<<"\tEnter RollNo Of Student: ";
-cin>>rollNo;
 
-ifstream in("/Users/aryannarang/Desktop/University Management System/university.txt");
-if(!in){
-cout<<"\tError: File Can't Open!"<<endl;
-}
-string line;
-bool found = false;
-while(getline(in, line)){
-int data = line.find(rollNo);
-if(data != string::npos){
+void update(University student)
+{
+    string oldRollNo;
+    cout << "\tEnter RollNo Of Student: ";
+    cin >> oldRollNo;
 
-cout<<"\t"<<line<<endl;
-found = true;
-}
-if(!found){
-cout<<"\tStudent Not Found!"<<endl;
-}
-}
-in.close();
+    ifstream infile("C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university.txt");
+    ofstream outfile("C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university_temp.txt");
+    if (!infile || !outfile)
+    {
+        cout << "\tError: File Can't Open!" << endl;
+        return;
+    }
 
-}
+    string line;
+    bool found = false;
+    while (getline(infile, line))
+    {
+        int pos = line.find(oldRollNo);
+        if (pos != string::npos)
+        {
+            // Extract existing details from the line
+            size_t firstDelim = line.find(" : ");
+            size_t secondDelim = line.find(" : ", firstDelim + 3);
+            size_t thirdDelim = line.find(" : ", secondDelim + 3);
 
-void update(University student){
-string rollNo;
-cout<<"\tEnter RollNo Of Student: ";
-cin>>rollNo;
+            string currentRollNo = line.substr(1, firstDelim - 1);
+            string currentName = line.substr(firstDelim + 3, secondDelim - firstDelim - 3);
+            string currentSubject = line.substr(secondDelim + 3, thirdDelim - secondDelim - 3);
+            string currentAddress = line.substr(thirdDelim + 3);
 
-ifstream infile("/Users/aryannarang/Desktop/University Management System/university.txt");
-ofstream outfile("/Users/aryannarang/Desktop/University Management System/university temp.txt");
-if(!infile || !outfile){
-	cout<<"\tError: File Can't Opne!"<<endl;
-}
+            // Prompt for new details, allowing the user to skip fields
+            string newRollNo, name, subject, address;
 
-string line;
-bool found = false;
-while(getline(infile, line)){
-int pos = line.find(rollNo);
-if(pos != string::npos){
-string address;
-cout<<"\tEnter New Address: ";
-cin>>address;
-student.setAddress(address);
+            cout << "\tEnter New RollNo (or press Enter to keep the same): ";
+            cin.ignore();
+            getline(cin, newRollNo);
+            student.setRollNo(newRollNo.empty() ? currentRollNo : newRollNo);
 
-int newPos = line.find_last_of(':');
-line.replace(newPos + 2, string::npos, student.getAddress());
-}
-outfile<<line<<endl;
-found = true;
-}
-if(!found){
-cout<<"\tStudent Not Found!"<<endl;
-}
-outfile.close();
-infile.close();
-remove("/Users/aryannarang/Desktop/University Management System/university.txt");
-rename("/Users/aryannarang/Desktop/University Management System/university temp.txt", "/Users/aryannarang/Desktop/University Management System/university.txt");
-cout<<"\tData Updated!"<<endl;
-}
+            cout << "\tEnter New Name (or press Enter to keep the same): ";
+            getline(cin, name);
+            student.setName(name.empty() ? currentName : name);
 
-int main(){
-University student;
+            cout << "\tEnter New Subject (or press Enter to keep the same): ";
+            getline(cin, subject);
+            student.setSubject(subject.empty() ? currentSubject : subject);
 
-bool exit = false;
-while(!exit){
-	system("cls");
-int val;
-cout<<"\tWelcome To University Management System"<<endl;
-cout<<"\t***************************************"<<endl;
-cout<<"\t1.Add Student."<<endl;
-cout<<"\t2.Search Student."<<endl;
-cout<<"\t3.Update Data Of Student."<<endl;
-cout<<"\t4.Exit."<<endl;
-cout<<"\tEnter Your Choice: ";
-cin>>val;
+            cout << "\tEnter New Address (or press Enter to keep the same): ";
+            getline(cin, address);
+            student.setAddress(address.empty() ? currentAddress : address);
 
-if(val==1){
-system("cls");
-add(student);
-sleep(6000);
+            // Construct the new line with updated details
+            line = "\t" + student.getRollNo() + " : " + student.getName() + " : " + student.getSubject() + " : " + student.getAddress();
+            found = true;
+        }
+        outfile << line << endl;
+    }
+
+    if (!found)
+    {
+        cout << "\tStudent Not Found!" << endl;
+    }
+    else
+    {
+        cout << "\tData Updated!" << endl;
+    }
+
+    infile.close();
+    outfile.close();
+
+    // Replace the original file with the updated file
+    remove("C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university.txt");
+    rename("C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university_temp.txt", "C:/Users/Sarthak Ralhan/OneDrive/Desktop/Project/university.txt");
 }
 
-else if(val==2){
-system("cls");
-search();
-sleep(6000);
-}
 
-else if(val==3){
-system("cls");
-update(student);
-sleep(6000);
-}
 
-else if(val==4){
-system("cls");
-exit = true;
-cout<<"\tGood Luck!"<<endl;
-sleep(3000);
-}	
-}
+int main()
+{
+    University student;
+
+    bool exit = false;
+    while (!exit)
+    {
+        system("cls");
+        int val;
+        cout << "\tWelcome To University Management System" << endl;
+        cout << "\t***************************************" << endl;
+        cout << "\t1.Add Student." << endl;
+        cout << "\t2.Search Student." << endl;
+        cout << "\t3.Update Data Of Student." << endl;
+        cout << "\t4.Exit." << endl;
+        cout << "\tEnter Your Choice: ";
+        cin >> val;
+
+        if (val == 1)
+        {
+            system("cls");
+            add(student);
+            Sleep(2000);
+        }
+
+        else if (val == 2)
+        {
+            system("cls");
+            search();
+            Sleep(6000);
+        }
+
+        else if (val == 3)
+        {
+            system("cls");
+            update(student);
+            Sleep(2000);
+        }
+
+        else if (val == 4)
+        {
+            system("cls");
+            exit = true;
+            cout << "\tGood Luck!" << endl;
+            Sleep(2000);
+        }
+    }
 }

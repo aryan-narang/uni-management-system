@@ -1,1 +1,0 @@
-# uni-management-system
